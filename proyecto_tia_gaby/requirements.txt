@@ -1,4 +1,7 @@
 Flask==3.0.0
 gunicorn==21.2.0
 qrcode==7.4.2
-pillow==10.3.0
+pillow==10.0.1
+setuptools==69.5.1
+wheel==0.43.0
+
