@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Panel Empresarial</title>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+
+body{
+background:#000;
+color:#D4AF37;
+font-family:-apple-system,BlinkMacSystemFont,Arial;
+margin:0;
+}
+
+/* HEADER */
+
+.header{
+background:linear-gradient(90deg,#000,#111);
+padding:20px;
+font-size:24px;
+font-weight:bold;
+border-bottom:1px solid #D4AF37;
+text-align:center;
+}
+
+/* GRID */
+
+.container{
+display:grid;
+grid-template-columns:280px 1fr;
+height:calc(100vh - 70px);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+background:#0a0a0a;
+padding:20px;
+border-right:1px solid #D4AF37;
+}
+
+.menu-btn{
+display:block;
+width:100%;
+padding:15px;
+margin-bottom:12px;
+background:linear-gradient(45deg,#D4AF37,#FFD700);
+border:none;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.menu-btn:hover{
+transform:scale(1.05);
+box-shadow:0 0 15px #D4AF37;
+}
+
+/* CONTENT */
+
+.content{
+padding:25px;
+overflow:auto;
+}
+
+/* CARD */
+
+.card{
+background:#111;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 25px rgba(212,175,55,0.25);
+margin-bottom:20px;
+}
+
+/* STATS */
+
+.stats{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.stat{
+flex:1;
+background:#111;
+padding:20px;
+border-radius:15px;
+text-align:center;
+min-width:180px;
+box-shadow:0 0 15px rgba(212,175,55,0.2);
+}
+
+.stat h1{
+font-size:40px;
+margin:10px 0;
+}
+
+/* QR */
+
+#reader{
+width:100%;
+max-width:420px;
+margin:auto;
+border:3px solid #D4AF37;
+border-radius:15px;
+padding:10px;
+background:black;
+}
+
+/* CAMERA VIDEO */
+
+#reader video{
+width:100% !important;
+border-radius:10px;
+}
+
+/* CALENDAR */
+
+#calendar{
+background:#111;
+border-radius:15px;
+padding:10px;
+}
+
+/* FULLCALENDAR DARK */
+
+.fc{
+color:#D4AF37;
+}
+
+.fc-toolbar-title{
+color:#FFD700;
+}
+
+.fc-button{
+background:#D4AF37 !important;
+border:none !important;
+color:black !important;
+}
+
+.fc-daygrid-day{
+background:#000;
+border:1px solid #222;
+}
+
+.fc-day-today{
+background:#1a1a1a !important;
+}
+
+.fc-event{
+border:none !important;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Panel Empresarial Wallet
+</div>
+
+<div class="container">
+
+<div class="sidebar">
+
+<button class="menu-btn" onclick="mostrar('dashboard')">
+Dashboard
+</button>
+
+<button class="menu-btn" onclick="mostrar('qr'); iniciarQR();">
+Escanear QR
+</button>
+
+<button class="menu-btn" onclick="mostrar('calendar'); calendar.render();">
+Calendario
+</button>
+
+<a href="/logout">
+<button class="menu-btn">
+Cerrar sesión
+</button>
+</a>
+
+</div>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+<div class="stats">
+
+<div class="stat">
+<h3>Usuarios</h3>
+<h1 id="usuarios">0</h1>
+</div>
+
+<div class="stat">
+<h3>Citas</h3>
+<h1 id="citas">0</h1>
+</div>
+
+<div class="stat">
+<h3>Puntos</h3>
+<h1 id="puntos">0</h1>
+</div>
+
+</div>
+
+</div>
+
+<!-- QR -->
+
+<div id="qr" style="display:none">
+
+<div class="card">
+
+<h2>Escanear código QR</h2>
+
+<div id="reader"></div>
+
+</div>
+
+</div>
+
+<!-- CALENDAR -->
+
+<div id="calendar_view" style="display:none">
+
+<div class="card">
+
+<h2>Calendario de citas</h2>
+
+<div id="calendar"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* MENU */
+
+function mostrar(section){
+
+document.getElementById("dashboard").style.display="none";
+document.getElementById("qr").style.display="none";
+document.getElementById("calendar_view").style.display="none";
+
+if(section=="dashboard")
+document.getElementById("dashboard").style.display="block";
+
+if(section=="qr")
+document.getElementById("qr").style.display="block";
+
+if(section=="calendar")
+document.getElementById("calendar_view").style.display="block";
+
+}
+
+/* STATS */
+
+function cargarStats(){
+
+fetch("/admin_stats")
+.then(res=>res.json())
+.then(data=>{
+
+document.getElementById("usuarios").innerText=data.usuarios;
+document.getElementById("citas").innerText=data.citas;
+document.getElementById("puntos").innerText=data.puntos;
+
+});
+
+}
+
+setInterval(cargarStats,2000);
+
+cargarStats();
+
+/* QR SCANNER */
+
+let html5QrCode;
+
+function iniciarQR(){
+
+const reader = document.getElementById("reader");
+
+reader.innerHTML="";
+
+html5QrCode = new Html5Qrcode("reader");
+
+Html5Qrcode.getCameras().then(cameras=>{
+
+if(cameras.length==0){
+
+alert("No se encontró cámara");
+
+return;
+
+}
+
+const cameraId=cameras[0].id;
+
+html5QrCode.start(
+
+cameraId,
+
+{
+fps:10,
+qrbox:{width:250,height:250}
+},
+
+(decodedText)=>{
+
+fetch("/scan_qr",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+data:decodedText
+})
+
+})
+.then(res=>res.json())
+.then(resp=>{
+
+alert("Punto agregado correctamente");
+
+cargarStats();
+
+});
+
+},
+
+(error)=>{}
+
+);
+
+});
+
+}
+
+/* CALENDAR */
+
+let calendar;
+
+document.addEventListener('DOMContentLoaded', function(){
+
+calendar=new FullCalendar.Calendar(
+
+document.getElementById('calendar'),
+
+{
+
+locale:'es',
+
+initialView:'dayGridMonth',
+
+height:600,
+
+events:'/admin_citas',
+
+eventColor:'#D4AF37',
+
+eventTextColor:'#000'
+
+}
+
+);
+
+});
+
+</script>
+
+</body>
+</html>

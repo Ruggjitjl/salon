@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+
+body{
+background:black;
+color:#D4AF37;
+font-family:Arial;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Crear recompensa</h2>
+
+<form method="POST">
+
+<input name="user_id" placeholder="ID usuario">
+<input name="reward" placeholder="Recompensa">
+
+<button>Crear</button>
+
+</form>
+
+{% for r in rewards %}
+
+<p>{{r[1]}} - {{r[2]}}</p>
+
+{% endfor %}
+
+</body>
+</html>
