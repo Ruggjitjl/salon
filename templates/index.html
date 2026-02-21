@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BlackGold Rewards</title>
+
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+
+<style>
+
+:root{
+    --gold1:#FFD700;
+    --gold2:#C9A227;
+    --black1:#000000;
+    --black2:#111111;
+    --black3:#1a1a1a;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+}
+
+body{
+
+    background:
+    radial-gradient(circle at 20% 20%, #1a1a1a, #000);
+
+    color:white;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+}
+
+
+/* CONTENEDOR */
+.container{
+
+    text-align:center;
+    width:100%;
+    max-width:420px;
+    padding:20px;
+
+}
+
+
+/* LOGO */
+.logo{
+
+    font-size:32px;
+    font-weight:bold;
+
+    background:linear-gradient(45deg,var(--gold1),var(--gold2));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:10px;
+
+    animation:fadeIn 1s ease;
+}
+
+
+/* SUBTITULO */
+.subtitle{
+
+    color:#aaa;
+    margin-bottom:40px;
+
+    animation:fadeIn 1.5s ease;
+}
+
+
+/* TARJETA DEMO */
+.card-demo{
+
+    background:linear-gradient(135deg,#000,#1a1a1a);
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:40px;
+
+    position:relative;
+
+    box-shadow:
+    0 0 20px rgba(255,215,0,0.2),
+    inset 0 0 20px rgba(255,215,0,0.1);
+
+    animation:slideUp 1s ease;
+}
+
+
+/* CHIP */
+.chip{
+
+    width:50px;
+    height:35px;
+
+    background:linear-gradient(45deg,#FFD700,#C9A227);
+
+    border-radius:6px;
+
+    margin-bottom:20px;
+
+}
+
+
+/* NOMBRE */
+.card-title{
+
+    font-size:20px;
+    margin-bottom:10px;
+
+}
+
+
+/* NIVEL */
+.level{
+
+    color:var(--gold1);
+    font-weight:bold;
+
+}
+
+
+/* BOTONES */
+button{
+
+    width:100%;
+    padding:14px;
+
+    margin-top:12px;
+
+    border:none;
+    border-radius:12px;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+
+/* LOGIN */
+.login{
+
+    background:linear-gradient(45deg,var(--gold1),var(--gold2));
+    color:black;
+
+}
+
+.login:hover{
+
+    transform:scale(1.05);
+    box-shadow:0 0 20px gold;
+
+}
+
+
+/* REGISTER */
+.register{
+
+    background:transparent;
+    border:2px solid var(--gold1);
+    color:var(--gold1);
+
+}
+
+.register:hover{
+
+    background:var(--gold1);
+    color:black;
+}
+
+
+/* FOOTER */
+.footer{
+
+    margin-top:30px;
+    font-size:12px;
+    color:#555;
+
+}
+
+
+/* ANIMACIONES */
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+
+@keyframes slideUp{
+
+    from{
+        transform:translateY(50px);
+        opacity:0;
+    }
+
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+<div class="logo">
+BlackGold Rewards
+</div>
+
+<div class="subtitle">
+Tu tarjeta premium de fidelidad
+</div>
+
+
+<div class="card-demo">
+
+<div class="chip"></div>
+
+<div class="card-title">
+Tarjeta Premium
+</div>
+
+<div class="level">
+Nivel Oro
+</div>
+
+</div>
+
+
+<button class="login"
+onclick="location.href='/login'">
+
+Iniciar Sesión
+
+</button>
+
+
+<button class="register"
+onclick="location.href='/register'">
+
+Crear Cuenta
+
+</button>
+
+
+<div class="footer">
+Sistema seguro con QR
+</div>
+
+</div>
+
+
+<script>
+
+if('serviceWorker' in navigator){
+
+navigator.serviceWorker.register('/static/sw.js');
+
+}
+
+</script>
+
+
+</body>
+</html>
