@@ -13,7 +13,7 @@ os.makedirs("static/qr", exist_ok=True)
 # crear base de datos
 def init_db():
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     c.execute("""
@@ -91,7 +91,7 @@ def register():
 
         user_id = str(uuid.uuid4())
 
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect("/opt/render/project/src/database.db")
         c = conn.cursor()
 
         c.execute(
@@ -119,7 +119,7 @@ def login():
         correo = request.form["correo"]
         password = request.form["password"]
 
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect("/opt/render/project/src/database.db")
         c = conn.cursor()
 
         c.execute(
@@ -148,7 +148,7 @@ def dashboard():
 
     user_id = session["user"]
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM users WHERE id=?", (user_id,))
@@ -184,7 +184,7 @@ def crear_cita():
     hora = request.form["hora"]
     servicio = request.form["servicio"]
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     c.execute("""
@@ -202,7 +202,7 @@ def admin_citas():
     if not session.get("admin"):
         return jsonify([])
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     citas = c.execute("""
@@ -231,7 +231,7 @@ def admin_stats():
     if not session.get("admin"):
         return jsonify({"error":"no autorizado"})
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     usuarios = c.execute(
@@ -285,7 +285,7 @@ def scan_qr():
 
     user_id = request.json["data"]
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     c.execute(
@@ -310,7 +310,7 @@ def admin_rewards():
         user_id = request.form["user_id"]
         reward = request.form["reward"]
 
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect("/opt/render/project/src/database.db")
         c = conn.cursor()
 
         c.execute(
@@ -321,7 +321,7 @@ def admin_rewards():
         conn.commit()
         conn.close()
 
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("/opt/render/project/src/database.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM rewards")
